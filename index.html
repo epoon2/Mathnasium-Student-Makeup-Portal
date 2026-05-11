@@ -1,52 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Tutoring Portal</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tutoring Make-up Portal</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
+    body { background-color: #f8f9fa; padding: 20px; font-family: sans-serif; }
+    .card { max-width: 450px; margin: 40px auto; border: none; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .header { background: #6f42c1; color: white; padding: 30px; border-radius: 15px 15px 0 0; text-align: center; }
     .hidden { display: none; }
-    .card { max-width: 450px; margin: 50px auto; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    .btn-custom { background-color: #6f42c1; color: white; }
+    .btn-primary { background-color: #6f42c1; border: none; font-weight: bold; padding: 12px; }
+    .btn-primary:hover { background-color: #59359a; }
+    .balance-box { background: #e9ecef; border-radius: 10px; padding: 20px; margin: 20px 0; }
   </style>
 </head>
 <body>
 
-  <div id="loginCard" class="card p-4 text-center">
-    <h3>Tutoring Portal</h3>
-    <input type="text" id="name" class="form-control mb-2" placeholder="Student Full Name">
-    <input type="text" id="dob" class="form-control mb-3" placeholder="Birthday (MM/DD/YYYY)">
-    <button onclick="checkBalance()" id="btn" class="btn btn-custom w-100">Check Balance</button>
-    <p id="error" class="text-danger mt-2 hidden">Student not found.</p>
+  <div id="loginCard" class="card">
+    <div class="header">
+      <h2>Tutoring Portal</h2>
+      <p class="mb-0">Check your make-up session balance</p>
+    </div>
+    <div class="card-body p-4">
+      <div class="mb-3">
+        <label class="form-label fw-bold">Student Full Name</label>
+        <input type="text" id="name" class="form-control" placeholder="First and Last Name">
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-bold">Student Birthday</label>
+        <input type="text" id="dob" class="form-control" placeholder="MM/DD/YYYY">
+      </div>
+      <button onclick="checkBalance()" id="btn" class="btn btn-primary w-100">Check Balance</button>
+      <div id="error" class="text-danger mt-3 text-center hidden">No matching student found. Please check spelling and DOB.</div>
+    </div>
   </div>
 
-  <div id="resultCard" class="card p-4 text-center hidden">
-    <h4>Hello, <span id="studentName"></span></h4>
-    <div class="alert alert-info">Available Make-ups: <b id="balance">0</b></div>
-    
-    <a href="YOUR_GOOGLE_FORM_URL_HERE" target="_blank" class="btn btn-success w-100">Request a Make-up Session</a>
-    
-    <button onclick="location.reload()" class="btn btn-link mt-3">Back</button>
+  <div id="resultCard" class="card hidden">
+    <div class="header">
+      <h2>Welcome, <span id="studentName"></span>!</h2>
+    </div>
+    <div class="card-body p-4 text-center">
+      <div class="balance-box">
+        <p class="text-muted mb-1">Make-up Sessions Available</p>
+        <h1 class="display-3 fw-bold text-dark" id="balanceDisplay">0</h1>
+      </div>
+      
+      <a href="PASTE_YOUR_GOOGLE_FORM_URL_HERE" target="_blank" class="btn btn-success w-100 fw-bold py-3 mb-3">
+        Request a Make-up Session ↗
+      </a>
+      
+      <button onclick="location.reload()" class="btn btn-link text-muted text-decoration-none">← Sign Out</button>
+    </div>
   </div>
 
   <script>
-    const SCRIPT_URL = "YOUR_SCRIPT_URL_HERE";
+    // YOUR SCRIPT URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5ywYiNuUMiJIj82dB6BzOamDUyDpfJA2hgFJCfD7xDaCKizMujeRyO5dGugxX0CCY8Q/exec";
 
     function checkBalance() {
-      const name = document.getElementById('name').value;
-      const dob = document.getElementById('dob').value;
-      
+      const name = document.getElementById('name').value.trim();
+      const dob = document.getElementById('dob').value.trim();
+      const btn = document.getElementById('btn');
+      const err = document.getElementById('error');
+
+      if (!name || !dob) return;
+
+      btn.disabled = true;
+      btn.innerText = "Searching...";
+      err.classList.add('hidden');
+
+      // Create a temporary script tag for JSONP
       const script = document.createElement('script');
-      script.src = `${SCRIPT_URL}?callback=render&name=${encodeURIComponent(name)}&dob=${encodeURIComponent(dob)}`;
+      script.src = `${SCRIPT_URL}?callback=renderResponse&name=${encodeURIComponent(name)}&dob=${encodeURIComponent(dob)}`;
       document.body.appendChild(script);
+      
+      // Safety timeout if Google doesn't respond
+      setTimeout(() => {
+        if (btn.disabled) {
+          btn.disabled = false;
+          btn.innerText = "Check Balance";
+          err.classList.remove('hidden');
+          err.innerText = "Connection timed out. Try again.";
+        }
+      }, 8000);
     }
 
-    function render(data) {
+    // This matches the "callback" parameter in SCRIPT_URL
+    function renderResponse(data) {
+      const btn = document.getElementById('btn');
+      btn.disabled = false;
+      btn.innerText = "Check Balance";
+
       if (!data) {
         document.getElementById('error').classList.remove('hidden');
         return;
       }
+
       document.getElementById('studentName').innerText = data.name;
-      document.getElementById('balance').innerText = data.makeups;
+      document.getElementById('balanceDisplay').innerText = data.makeups;
       document.getElementById('loginCard').classList.add('hidden');
       document.getElementById('resultCard').classList.remove('hidden');
     }
