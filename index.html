@@ -13,6 +13,7 @@
     .btn-primary { background-color: #6f42c1; border: none; font-weight: bold; padding: 12px; }
     .btn-primary:hover { background-color: #59359a; }
     .balance-box { background: #e9ecef; border-radius: 10px; padding: 20px; margin: 20px 0; }
+    #secureFix { background: #fff3cd; border: 1px solid #ffeeba; border-radius: 8px; padding: 15px; margin-top: 15px; }
   </style>
 </head>
 <body>
@@ -32,7 +33,15 @@
         <input type="text" id="dob" class="form-control" placeholder="MM/DD/YYYY">
       </div>
       <button onclick="checkBalance()" id="btn" class="btn btn-primary w-100">Check Balance</button>
-      <div id="error" class="text-danger mt-3 text-center hidden">No matching student found. Please check spelling and DOB.</div>
+      
+      <div id="error" class="mt-3 text-center hidden">
+        <p id="errorText" class="text-danger fw-bold">No matching student found.</p>
+        <div id="secureFix" class="hidden">
+          <p class="small text-dark mb-2">Connection blocked by Google security. This usually happens if you are logged into multiple Gmail accounts.</p>
+          <a id="secureLink" href="#" target="_blank" class="btn btn-sm btn-warning fw-bold">Click to Fix Connection</a>
+          <p class="small text-muted mt-2">(A new tab will open. Close it and return here to try again.)</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -45,54 +54,53 @@
         <p class="text-muted mb-1">Make-up Sessions Available</p>
         <h1 class="display-3 fw-bold text-dark" id="balanceDisplay">0</h1>
       </div>
-      
       <a href="PASTE_YOUR_GOOGLE_FORM_URL_HERE" target="_blank" class="btn btn-success w-100 fw-bold py-3 mb-3">
         Request a Make-up Session ↗
       </a>
-      
       <button onclick="location.reload()" class="btn btn-link text-muted text-decoration-none">← Sign Out</button>
     </div>
   </div>
 
   <script>
-    // YOUR SCRIPT URL
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5ywYiNuUMiJIj82dB6BzOamDUyDpfJA2hgFJCfD7xDaCKizMujeRyO5dGugxX0CCY8Q/exec";
+    document.getElementById('secureLink').href = SCRIPT_URL;
 
     function checkBalance() {
       const name = document.getElementById('name').value.trim();
       const dob = document.getElementById('dob').value.trim();
       const btn = document.getElementById('btn');
       const err = document.getElementById('error');
+      const fixBox = document.getElementById('secureFix');
 
       if (!name || !dob) return;
 
       btn.disabled = true;
       btn.innerText = "Searching...";
       err.classList.add('hidden');
+      fixBox.classList.add('hidden');
 
-      // Create a temporary script tag for JSONP
       const script = document.createElement('script');
       script.src = `${SCRIPT_URL}?callback=renderResponse&name=${encodeURIComponent(name)}&dob=${encodeURIComponent(dob)}`;
       document.body.appendChild(script);
       
-      // Safety timeout if Google doesn't respond
       setTimeout(() => {
         if (btn.disabled) {
           btn.disabled = false;
           btn.innerText = "Check Balance";
+          document.getElementById('errorText').innerText = "Connection Timed Out";
+          fixBox.classList.remove('hidden');
           err.classList.remove('hidden');
-          err.innerText = "Connection timed out. Try again.";
         }
       }, 8000);
     }
 
-    // This matches the "callback" parameter in SCRIPT_URL
     function renderResponse(data) {
       const btn = document.getElementById('btn');
       btn.disabled = false;
       btn.innerText = "Check Balance";
 
       if (!data) {
+        document.getElementById('errorText').innerText = "Student not found. Check spelling/DOB.";
         document.getElementById('error').classList.remove('hidden');
         return;
       }
