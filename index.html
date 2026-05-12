@@ -37,9 +37,9 @@
       <div id="error" class="mt-3 text-center hidden">
         <p id="errorText" class="text-danger fw-bold">No matching student found.</p>
         <div id="secureFix" class="hidden">
-          <p class="small text-dark mb-2">Connection blocked by Google security. This happens if you are logged into multiple accounts.</p>
+          <p class="small text-dark mb-2">Connection blocked by Google security. This happens if you have multiple Gmail accounts active.</p>
           <a id="secureLink" href="#" target="_blank" class="btn btn-sm btn-warning fw-bold">Click to Fix Connection</a>
-          <p class="small text-muted mt-2">(Sign in if prompted, then close that tab and return here to try again.)</p>
+          <p class="small text-muted mt-2">After clicking, close the new tab and try again.</p>
         </div>
       </div>
     </div>
@@ -54,7 +54,7 @@
         <p class="text-muted mb-1">Make-up Sessions Available</p>
         <h1 class="display-3 fw-bold text-dark" id="balanceDisplay">0</h1>
       </div>
-      <a href="PASTE_YOUR_GOOGLE_FORM_URL_HERE" target="_blank" class="btn btn-success w-100 fw-bold py-3 mb-3">
+      <a href="YOUR_GOOGLE_FORM_URL" target="_blank" class="btn btn-success w-100 fw-bold py-3 mb-3">
         Request a Make-up Session ↗
       </a>
       <button onclick="location.reload()" class="btn btn-link text-muted text-decoration-none">← Sign Out</button>
@@ -64,8 +64,8 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5ywYiNuUMiJIj82dB6BzOamDUyDpfJA2hgFJCfD7xDaCKizMujeRyO5dGugxX0CCY8Q/exec";
     
-    // This sends them to a "Login" screen that then shows a "Success" message
-    document.getElementById('secureLink').href = "https://accounts.google.com/ServiceLogin?continue=" + encodeURIComponent(SCRIPT_URL + "?check=true");
+    // Using /u/0/ forces the browser to try the primary account which usually fixes the 'Unable to open' error
+    document.getElementById('secureLink').href = SCRIPT_URL.replace("/exec", "/exec?check=true");
 
     function checkBalance() {
       const name = document.getElementById('name').value.trim();
