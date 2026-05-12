@@ -63,7 +63,7 @@
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5ywYiNuUMiJIj82dB6BzOamDUyDpfJA2hgFJCfD7xDaCKizMujeRyO5dGugxX0CCY8Q/exec";
-    document.getElementById('secureLink').href = SCRIPT_URL;
+    document.getElementById('secureLink').href = SCRIPT_URL + "?authuser=0";
 
     function checkBalance() {
       const name = document.getElementById('name').value.trim();
