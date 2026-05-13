@@ -35,7 +35,7 @@
       <div id="error" class="mt-3 text-center hidden">
         <p id="errorText" class="text-danger fw-bold">No matching student found.</p>
         <div id="secureFix" class="hidden">
-          <p class="small text-dark mb-2">Google security is blocking the connection.</p>
+          <p class="small text-dark mb-2">Connection blocked by Google security.</p>
           <a id="secureLink" href="#" target="_blank" class="btn btn-sm btn-warning fw-bold">Click to Fix Connection</a>
         </div>
       </div>
@@ -86,7 +86,7 @@
       document.getElementById('btn').disabled = false;
       document.getElementById('btn').innerText = "Check Balance";
       if (!data) {
-        document.getElementById('errorText').innerText = "Student not found.";
+        document.getElementById('errorText').innerText = "Student not found. Please check name and birthday.";
         document.getElementById('error').classList.remove('hidden');
         return;
       }
