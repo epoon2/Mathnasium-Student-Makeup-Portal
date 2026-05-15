@@ -40,20 +40,24 @@
                 alert("Please enter both Name and Birthday");
                 return;
             }
-
+        
+            console.log("Starting search for:", name, dob); // NEW DEBUG LINE
             resultDiv.style.display = "block";
-            resultDiv.className = "";
             resultDiv.innerHTML = "Checking records...";
-
-            // --- IMPORTANT: PASTE YOUR DEPLOYED WEB APP URL BELOW ---
+        
             const url = "https://script.google.com/macros/s/AKfycbx5ywYiNuUMiJIj82dB6BzOamDUyDpfJA2hgFJCfD7xDaCKizMujeRyO5dGugxX0CCY8Q/exec"; 
             
-            // This creates a secure request to your Google Sheet
             const script = document.createElement('script');
             script.src = `${url}?name=${encodeURIComponent(name)}&dob=${encodeURIComponent(dob)}&callback=onSuccess`;
+            
+            // NEW ERROR TRACKING
+            script.onerror = function() {
+                console.error("The Script URL failed to load. Check your Deployment URL!");
+                resultDiv.innerHTML = "Connection Error. Check Console.";
+            };
+        
             document.body.appendChild(script);
         }
-
         // This function runs when the Google Sheet replies
         function onSuccess(data) {
             const div = document.getElementById('result');
