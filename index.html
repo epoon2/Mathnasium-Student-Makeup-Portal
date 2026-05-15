@@ -1,100 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mathnasium TC Portal</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { background-color: #f8f9fa; padding: 20px; font-family: sans-serif; }
-    .card { max-width: 450px; margin: 40px auto; border: none; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    .header { background: #6f42c1; color: white; padding: 30px; border-radius: 15px 15px 0 0; text-align: center; }
-    .hidden { display: none; }
-    .btn-primary { background-color: #6f42c1; border: none; font-weight: bold; padding: 12px; }
-    .balance-box { background: #e9ecef; border-radius: 10px; padding: 20px; margin: 20px 0; }
-    #secureFix { background: #fff3cd; border: 1px solid #ffeeba; border-radius: 8px; padding: 15px; margin-top: 15px; }
-  </style>
+    <title>Mathnasium Makeup Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 2.5rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; border-top: 5px solid #e31837; }
+        img { width: 180px; margin-bottom: 20px; }
+        h2 { color: #333; margin-bottom: 1.5rem; font-size: 1.4rem; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 14px; background-color: #e31837; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; margin-top: 10px; }
+        button:hover { background-color: #b3122b; }
+        #result { margin-top: 25px; padding: 15px; border-radius: 8px; display: none; line-height: 1.5; }
+        .success { background-color: #e6f4ea; color: #137333; border: 1px solid #ceead6; }
+        .error { background-color: #fce8e6; color: #c5221f; border: 1px solid #fad2cf; }
+    </style>
 </head>
 <body>
 
-  <div id="loginCard" class="card">
-    <div class="header">
-      <h2>Tutoring Portal</h2>
-      <p class="mb-0">Check your make-up session balance</p>
+    <div class="card">
+        <img src="https://www.mathnasium.com/themes/custom/mathnasium/logo.svg" alt="Mathnasium Logo">
+        <h2>Student Makeup Portal</h2>
+        
+        <input type="text" id="name" placeholder="Student Full Name">
+        <input type="text" id="dob" placeholder="Birthday (M/D/YYYY)">
+        
+        <button onclick="search()">Check Balance</button>
+        
+        <div id="result"></div>
     </div>
-    <div class="card-body p-4">
-      <div class="mb-3">
-        <label class="form-label fw-bold">Student Full Name</label>
-        <input type="text" id="name" class="form-control" placeholder="First and Last Name">
-      </div>
-      <div class="mb-3">
-        <label class="form-label fw-bold">Student Birthday</label>
-        <input type="text" id="dob" class="form-control" placeholder="MM/DD/YYYY">
-      </div>
-      <button onclick="checkBalance()" id="btn" class="btn btn-primary w-100">Check Balance</button>
-      <div id="error" class="mt-3 text-center hidden">
-        <p id="errorText" class="text-danger fw-bold">No matching student found.</p>
-        <div id="secureFix" class="hidden">
-          <p class="small text-dark mb-2">Connection blocked by Google security.</p>
-          <a id="secureLink" href="#" target="_blank" class="btn btn-sm btn-warning fw-bold">Click to Fix Connection</a>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <div id="resultCard" class="card hidden">
-    <div class="header"><h2>Welcome, <span id="studentName"></span>!</h2></div>
-    <div class="card-body p-4 text-center">
-      <div class="balance-box">
-        <p class="text-muted mb-1">Make-up Sessions Available</p>
-        <h1 class="display-3 fw-bold text-dark" id="balanceDisplay">0</h1>
-      </div>
-      <a href="YOUR_GOOGLE_FORM_URL" target="_blank" class="btn btn-success w-100 fw-bold py-3 mb-3">Request a Make-up Session ↗</a>
-      <button onclick="location.reload()" class="btn btn-link text-muted text-decoration-none">← Sign Out</button>
-    </div>
-  </div>
+    <script>
+        function search() {
+            const name = document.getElementById('name').value;
+            const dob = document.getElementById('dob').value;
+            const resultDiv = document.getElementById('result');
+            
+            if(!name || !dob) {
+                alert("Please enter both Name and Birthday");
+                return;
+            }
 
-  <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5ywYiNuUMiJIj82dB6BzOamDUyDpfJA2hgFJCfD7xDaCKizMujeRyO5dGugxX0CCY8Q/exec";
-    document.getElementById('secureLink').href = SCRIPT_URL + "?check=true";
+            resultDiv.style.display = "block";
+            resultDiv.className = "";
+            resultDiv.innerHTML = "Checking records...";
 
-    function checkBalance() {
-      const name = document.getElementById('name').value.trim();
-      const dob = document.getElementById('dob').value.trim();
-      const btn = document.getElementById('btn');
-      const err = document.getElementById('error');
-      const fixBox = document.getElementById('secureFix');
-
-      if (!name || !dob) return;
-      btn.disabled = true; btn.innerText = "Searching...";
-      err.classList.add('hidden'); fixBox.classList.add('hidden');
-
-      const script = document.createElement('script');
-      script.src = `${SCRIPT_URL}?callback=renderResponse&name=${encodeURIComponent(name)}&dob=${encodeURIComponent(dob)}`;
-      document.body.appendChild(script);
-      
-      setTimeout(() => {
-        if (btn.disabled) {
-          btn.disabled = false; btn.innerText = "Check Balance";
-          document.getElementById('errorText').innerText = "Connection Timed Out";
-          fixBox.classList.remove('hidden'); err.classList.remove('hidden');
+            // --- IMPORTANT: PASTE YOUR DEPLOYED WEB APP URL BELOW ---
+            const url = "https://script.google.com/macros/s/AKfycbx5ywYiNuUMiJIj82dB6BzOamDUyDpfJA2hgFJCfD7xDaCKizMujeRyO5dGugxX0CCY8Q/exec"; 
+            
+            // This creates a secure request to your Google Sheet
+            const script = document.createElement('script');
+            script.src = `${url}?name=${encodeURIComponent(name)}&dob=${encodeURIComponent(dob)}&callback=onSuccess`;
+            document.body.appendChild(script);
         }
-      }, 8000);
-    }
 
-    function renderResponse(data) {
-      document.getElementById('btn').disabled = false;
-      document.getElementById('btn').innerText = "Check Balance";
-      if (!data) {
-        document.getElementById('errorText').innerText = "Student not found. Please check name and birthday.";
-        document.getElementById('error').classList.remove('hidden');
-        return;
-      }
-      document.getElementById('studentName').innerText = data.name;
-      document.getElementById('balanceDisplay').innerText = data.makeups;
-      document.getElementById('loginCard').classList.add('hidden');
-      document.getElementById('resultCard').classList.remove('hidden');
-    }
-  </script>
+        // This function runs when the Google Sheet replies
+        function onSuccess(data) {
+            const div = document.getElementById('result');
+            if (data) {
+                div.className = "success";
+                div.innerHTML = `<strong>${data.name}</strong><br>Makeup Sessions Available: <strong>${data.makeups}</strong>`;
+            } else {
+                div.className = "error";
+                div.innerHTML = "No record found.<br><small>Check spelling or Birthday format (M/D/YYYY).</small>";
+            }
+        }
+    </script>
 </body>
 </html>
