@@ -65,6 +65,23 @@
             background-color: #b3122b;
         }
 
+        .backup-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        .backup-button:hover {
+            background-color: #111;
+        }
+
         #result {
             margin-top: 25px;
             padding: 15px;
@@ -90,6 +107,11 @@
             color: #174ea6;
             border: 1px solid #d2e3fc;
         }
+
+        small {
+            display: inline-block;
+            margin-top: 6px;
+        }
     </style>
 </head>
 
@@ -114,62 +136,69 @@
             const name = document.getElementById("name").value.trim();
             const parentName = document.getElementById("parentName").value.trim();
             const resultDiv = document.getElementById("result");
-        
+
             if (!name || !parentName) {
                 alert("Please enter both Student Name and Parent Full Name");
                 return;
             }
-        
+
             resultDiv.style.display = "block";
             resultDiv.className = "loading";
             resultDiv.innerHTML = "Checking records...";
-        
+
             console.log("Starting search for:", name, parentName);
-        
+
             const oldScript = document.getElementById("jsonp-script");
             if (oldScript) {
                 oldScript.remove();
             }
-        
-            let requestFinished = false;
-        
-            const timeout = setTimeout(function() {
-                if (!requestFinished) {
-                    resultDiv.className = "error";
-                    resultDiv.innerHTML =
-                        "Connection Error.<br>" +
-                        "<small>" +
-                        "Please refresh the page and try again. If this still happens, open this portal in a private/incognito window or try another browser." +
-                        "</small>";
-                }
-            }, 10000);
 
-    const script = document.createElement("script");
-    script.id = "jsonp-script";
+            const script = document.createElement("script");
+            script.id = "jsonp-script";
 
-    script.src =
-        SCRIPT_URL +
-        "?name=" + encodeURIComponent(name) +
-        "&parent=" + encodeURIComponent(parentName) +
-        "&callback=onSuccess" +
-        "&cacheBust=" + Date.now();
+            script.src =
+                SCRIPT_URL +
+                "?name=" + encodeURIComponent(name) +
+                "&parent=" + encodeURIComponent(parentName) +
+                "&callback=onSuccess" +
+                "&cacheBust=" + Date.now();
 
-    script.onerror = function() {
-        requestFinished = true;
-        clearTimeout(timeout);
+            script.onerror = function() {
+                console.error("The Script URL failed to load. Showing manual fallback.");
 
-        console.error("The Script URL failed to load. Check Apps Script deployment permissions.");
+                resultDiv.className = "error";
+                resultDiv.innerHTML =
+                    "Connection Error.<br>" +
+                    "<small>Your browser or Google account may be blocking the automatic lookup.</small>" +
+                    "<button class=\"backup-button\" onclick=\"manualFallback()\">" +
+                    "Open Secure Backup Portal ↗" +
+                    "</button>" +
+                    "<small>The backup page may show the result as plain text.</small>";
+            };
 
-        resultDiv.className = "error";
-        resultDiv.innerHTML =
-            "Connection Error.<br>" +
-            "<small>" +
-            "Please refresh the page and try again. If this still happens, open this portal in a private/incognito window or try another browser." +
-            "</small>";
-    };
+            document.body.appendChild(script);
+        }
 
-    document.body.appendChild(script);
-}
+        function manualFallback() {
+            const name = document.getElementById("name").value.trim();
+            const parentName = document.getElementById("parentName").value.trim();
+
+            if (!name || !parentName) {
+                alert("Please enter both Student Name and Parent Full Name");
+                return;
+            }
+
+            const target =
+                SCRIPT_URL +
+                "?name=" + encodeURIComponent(name) +
+                "&parent=" + encodeURIComponent(parentName);
+
+            const chooserUrl =
+                "https://accounts.google.com/AccountChooser?continue=" +
+                encodeURIComponent(target);
+
+            window.open(chooserUrl, "_blank");
+        }
 
         function onSuccess(data) {
             const div = document.getElementById("result");
