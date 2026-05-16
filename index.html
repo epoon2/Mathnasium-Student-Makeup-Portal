@@ -95,83 +95,28 @@
 
 <body>
     <div class="card">
-    <img src="https://www.mathnasium.com/themes/custom/mathnasium/logo.svg" alt="Mathnasium Logo">
+        <img src="https://www.mathnasium.com/themes/custom/mathnasium/logo.svg" alt="Mathnasium Logo">
 
-    <h2>Student Makeup Portal</h2>
+        <h2>Student Makeup Portal</h2>
 
-    <input type="text" id="name" placeholder="Student Full Name">
-    <input type="text" id="parentName" placeholder="Parent Full Name on File">
+        <input type="text" id="name" placeholder="Student Full Name">
+        <input type="text" id="parentName" placeholder="Parent Full Name on File">
 
-    <button onclick="search()">Check Balance</button>
+        <button onclick="search()">Check Balance</button>
 
-    <div id="result"></div>
-</div>
-
-<script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2HSf_heyT8FNkh9pe9Kxnwxg3B3njUaX56fHYy1o-gynnIb82k2ySNZjsSKZSiZ0whQ/exec";
-
-    function search() {
-        const name = document.getElementById("name").value.trim();
-        const parentName = document.getElementById("parentName").value.trim(); // Updated variable
-        const resultDiv = document.getElementById("result");
-
-        if (!name || !parentName) {
-            alert("Please enter both Student Name and Parent First Name");
-            return;
-        }
-
-        resultDiv.style.display = "block";
-        resultDiv.className = "loading";
-        resultDiv.innerHTML = "Checking records...";
-
-        const oldScript = document.getElementById("jsonp-script");
-        if (oldScript) { oldScript.remove(); }
-
-        const script = document.createElement("script");
-        script.id = "jsonp-script";
-
-        // SWAPPED: Sending parentName parameter instead of dob
-        script.src =
-            SCRIPT_URL +
-            "?name=" + encodeURIComponent(name) +
-            "&parent=" + encodeURIComponent(parentName) +
-            "&callback=onSuccess";
-
-        script.onerror = function() {
-            resultDiv.className = "error";
-            resultDiv.innerHTML = "Connection Error. Please contact staff.";
-        };
-
-        document.body.appendChild(script);
-    }
-
-    function onSuccess(data) {
-        const div = document.getElementById("result");
-
-        if (data && !data.error) {
-            div.className = "success";
-            div.innerHTML =
-                "<strong>" + data.name + "</strong><br>" +
-                "Makeup Sessions Available: <strong>" + data.makeups + "</strong>";
-        } else {
-            div.className = "error";
-            div.innerHTML =
-                "No record found.<br>" +
-                "<small>Check spelling. Make sure to use the primary Parent's First Name on file.</small>";
-        }
-    }
-</script>
+        <div id="result"></div>
+    </div>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2HSf_heyT8FNkh9pe9Kxnwxg3B3njUaX56fHYy1o-gynnIb82k2ySNZjsSKZSiZ0whQ/exec";
 
         function search() {
             const name = document.getElementById("name").value.trim();
-            const dob = document.getElementById("dob").value.trim();
+            const parentName = document.getElementById("parentName").value.trim();
             const resultDiv = document.getElementById("result");
 
-            if (!name || !dob) {
-                alert("Please enter both Name and Birthday");
+            if (!name || !parentName) {
+                alert("Please enter both Student Name and Parent Full Name");
                 return;
             }
 
@@ -179,7 +124,7 @@
             resultDiv.className = "loading";
             resultDiv.innerHTML = "Checking records...";
 
-            console.log("Starting search for:", name, dob);
+            console.log("Starting search for:", name, parentName);
 
             const oldScript = document.getElementById("jsonp-script");
             if (oldScript) {
@@ -192,7 +137,7 @@
             script.src =
                 SCRIPT_URL +
                 "?name=" + encodeURIComponent(name) +
-                "&dob=" + encodeURIComponent(dob) +
+                "&parent=" + encodeURIComponent(parentName) +
                 "&callback=onSuccess" +
                 "&cacheBust=" + Date.now();
 
@@ -207,7 +152,7 @@
 
         function onSuccess(data) {
             const div = document.getElementById("result");
-        
+
             if (data && !data.error) {
                 div.className = "success";
                 div.innerHTML =
@@ -217,7 +162,7 @@
                 div.className = "error";
                 div.innerHTML =
                     "No record found.<br>" +
-                    "<small>Check spelling. Make sure to use the primary Parent's Full Name on file.</small>";
+                    "<small>Check spelling. Use the parent full name on file.</small>";
             }
         }
     </script>
