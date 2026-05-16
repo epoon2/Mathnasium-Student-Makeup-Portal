@@ -100,7 +100,7 @@
     <h2>Student Makeup Portal</h2>
 
     <input type="text" id="name" placeholder="Student Full Name">
-    <input type="text" id="parentName" placeholder="Parent First Name">
+    <input type="text" id="parentName" placeholder="Parent Full Name on File">
 
     <button onclick="search()">Check Balance</button>
 
@@ -207,18 +207,17 @@
 
         function onSuccess(data) {
             const div = document.getElementById("result");
-
+        
             if (data && !data.error) {
                 div.className = "success";
                 div.innerHTML =
                     "<strong>" + data.name + "</strong><br>" +
-                    "Birthday: <strong>" + data.dob + "</strong><br>" +
                     "Makeup Sessions Available: <strong>" + data.makeups + "</strong>";
             } else {
                 div.className = "error";
                 div.innerHTML =
                     "No record found.<br>" +
-                    "<small>Check spelling or Birthday format. Example: 11/25/2014</small>";
+                    "<small>Check spelling. Make sure to use the primary Parent's Full Name on file.</small>";
             }
         }
     </script>
