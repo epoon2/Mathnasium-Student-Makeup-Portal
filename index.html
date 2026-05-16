@@ -138,7 +138,8 @@
                 SCRIPT_URL +
                 "?name=" + encodeURIComponent(name) +
                 "&dob=" + encodeURIComponent(dob) +
-                "&callback=onSuccess";
+                "&callback=onSuccess" +
+                "&cacheBust=" + Date.now();
 
             script.onerror = function() {
                 console.error("The Script URL failed to load. Check your Apps Script deployment URL and permissions.");
