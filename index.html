@@ -189,21 +189,29 @@
                 "<small>Choose your Google account there, then come back to this tab and press Check Balance again.</small>";
         }
 
-        function onSuccess(data) {
-            const div = document.getElementById("result");
-
-            if (data && !data.error) {
-                div.className = "success";
-                div.innerHTML =
-                    "<strong>" + data.name + "</strong><br>" +
-                    "Makeup Sessions Available: <strong>" + data.makeups + "</strong>";
-            } else {
-                div.className = "error";
-                div.innerHTML =
-                    "No record found.<br>" +
-                    "<small>Check spelling. Use the parent full name on file.</small>";
+        <script>
+            function onSuccess(data) {
+                const div = document.getElementById("result");
+        
+                const lastUpdatedText = data && data.lastUpdated
+                    ? "<br><small>Last updated: " + data.lastUpdated + "</small>"
+                    : "";
+        
+                if (data && !data.error && data.found !== false) {
+                    div.className = "success";
+                    div.innerHTML =
+                        "<strong>" + data.name + "</strong><br>" +
+                        "Makeup Sessions Available: <strong>" + data.makeups + "</strong>" +
+                        lastUpdatedText;
+                } else {
+                    div.className = "error";
+                    div.innerHTML =
+                        "No record found.<br>" +
+                        "<small>Check spelling. Use the parent full name on file.</small>" +
+                        lastUpdatedText;
+                }
             }
-        }
+        </script>
     </script>
 </body>
 </html>
