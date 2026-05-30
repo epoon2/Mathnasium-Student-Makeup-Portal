@@ -164,31 +164,18 @@
                 "&cacheBust=" + Date.now();
 
             script.onerror = function() {
-                console.error("The Script URL failed to load. Showing Google sign-in fallback.");
-
+                console.error("The Script URL failed to load.");
+            
                 resultDiv.className = "error";
                 resultDiv.innerHTML =
                     "Connection Error.<br>" +
-                    "<small>Your browser or Google account may be blocking the automatic lookup.</small>" +
-                    "<button class=\"backup-button\" onclick=\"manualFallback()\">" +
-                    "Open Google Sign-In ↗" +
-                    "</button>" +
-                    "<small>After signing in, return to this tab and press Check Balance again.</small>";
+                    "<small>Your browser, Google account, or extensions may be blocking the automatic lookup.</small><br>" +
+                    "<small>Please copy this website link and open it in an Incognito or Private Browsing window, then try again.</small>";
             };
 
             document.body.appendChild(script);
         }
-
-        function manualFallback() {
-            window.open("https://accounts.google.com/AccountChooser", "_blank");
-
-            const resultDiv = document.getElementById("result");
-            resultDiv.className = "error";
-            resultDiv.innerHTML =
-                "A Google sign-in page opened in a new tab.<br>" +
-                "<small>Choose your Google account there, then come back to this tab and press Check Balance again.</small>";
-        }
-
+        
             function onSuccess(data) {
                 const div = document.getElementById("result");
         
