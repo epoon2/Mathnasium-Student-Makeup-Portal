@@ -188,6 +188,9 @@
                     div.innerHTML =
                         "<strong>" + data.name + "</strong><br>" +
                         "Makeup Sessions Available: <strong>" + data.makeups + "</strong>" +
+                        (data.unredeemedDates
+                          ? "<br><small>Unredeemed dates: " + data.unredeemedDates + "</small>"
+                          : "") +
                         lastUpdatedText;
                 } else {
                     div.className = "error";
