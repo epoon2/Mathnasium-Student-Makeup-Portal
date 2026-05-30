@@ -149,6 +149,36 @@
             margin-top: 20px;
             line-height: 1.5;
         }
+        .history-section {
+            margin-top: 18px;
+            text-align: left;
+        }
+        
+        .history-section h3 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            background: white;
+            color: #333;
+        }
+        
+        .history-table th,
+        .history-table td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: left;
+        }
+        
+        .history-table th {
+            background-color: #f4f7f6;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -278,7 +308,8 @@
                         : "";
             
                 document.getElementById("dashboardMessage").innerHTML =
-                    "<small>Current-month makeup balances are estimates based on attendance uploaded so far and remaining scheduled sessions. Final balances may update after the month ends.</small>";
+                    "<small>Current-month makeup balances are estimates based on attendance uploaded so far and remaining scheduled sessions. Final balances may update after the month ends.</small>" +
+                    renderMakeupHistoryTable(data.makeupHistory);
             }
             
             function logout() {
@@ -308,6 +339,62 @@
                 document.getElementById("dashboardMessage").innerHTML =
                     "<strong>Current Schedule</strong><br>" +
                     "<small>This feature will be added soon.</small>";
+            }
+            function renderMakeupHistoryTable(makeupHistoryJson) {
+                let history = [];
+            
+                try {
+                    history = JSON.parse(makeupHistoryJson || "[]");
+                } catch (err) {
+                    console.error("Could not parse makeup history:", err);
+                    history = [];
+                }
+            
+                if (!history.length) {
+                    return "<br><small>No missed-session history found.</small>";
+                }
+            
+                let html =
+                    "<div class='history-section'>" +
+                    "<h3>Makeup History</h3>" +
+                    "<table class='history-table'>" +
+                    "<thead>" +
+                    "<tr>" +
+                    "<th>Missed Date</th>" +
+                    "<th>Day</th>" +
+                    "<th>Status</th>" +
+                    "<th>Redeemed On</th>" +
+                    "<th>Expires</th>" +
+                    "</tr>" +
+                    "</thead>" +
+                    "<tbody>";
+            
+                history.forEach(function(item) {
+                    html +=
+                        "<tr>" +
+                        "<td>" + escapeHtml(item.missedDate || "") + "</td>" +
+                        "<td>" + escapeHtml(item.day || "") + "</td>" +
+                        "<td>" + escapeHtml(item.status || "") + "</td>" +
+                        "<td>" + escapeHtml(item.redeemedOn || "-") + "</td>" +
+                        "<td>" + escapeHtml(item.expiresOn || "-") + "</td>" +
+                        "</tr>";
+                });
+            
+                html +=
+                    "</tbody>" +
+                    "</table>" +
+                    "</div>";
+            
+                return html;
+            }
+            
+            function escapeHtml(value) {
+                return String(value || "")
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
             }
     </script>
 </body>
