@@ -112,6 +112,43 @@
             display: inline-block;
             margin-top: 6px;
         }
+        .dashboard {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+        
+        .dashboard-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            border-top: 5px solid #e31837;
+        }
+        
+        .balance-box {
+            background-color: #f4f7f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .balance-box p {
+            margin: 0;
+            color: #555;
+        }
+        
+        .balance-box h1 {
+            margin: 8px 0;
+            font-size: 3rem;
+            color: #e31837;
+        }
+        
+        #dashboardMessage {
+            margin-top: 20px;
+            line-height: 1.5;
+        }
     </style>
 </head>
 
@@ -127,6 +164,29 @@
         <button onclick="search()">Check Balance</button>
 
         <div id="result"></div>
+    </div>
+
+    <div id="dashboard" class="dashboard" style="display: none;">
+        <div class="dashboard-card">
+            <img src="images/mathnasium-logo.png" alt="Mathnasium Logo">
+
+            <h2 id="dashboardStudentName">Student Dashboard</h2>
+
+            <div class="balance-box">
+                <p>Makeup Sessions Available</p>
+                <h1 id="dashboardMakeups">0</h1>
+                <small id="dashboardUnredeemedDates"></small>
+                <small id="dashboardLastUpdated"></small>
+            </div>
+
+            <button onclick="showMakeupScheduling()">Schedule a Makeup Session</button>
+            <button onclick="showScheduleChangeRequest()">Request a Schedule Change</button>
+            <button onclick="showCurrentSchedule()">View Current Schedule</button>
+
+            <button class="backup-button" onclick="logout()">Search Another Student</button>
+
+            <div id="dashboardMessage"></div>
+        </div>
     </div>
 
     <script>
@@ -184,15 +244,7 @@
                     : "";
         
                 if (data && !data.error && data.found !== false) {
-                    div.className = "success";
-                    div.innerHTML =
-                        "<strong>" + data.name + "</strong><br>" +
-                        "Makeup Sessions Available: <strong>" + data.makeups + "</strong>" +
-                        "<br><small>Current-month makeup balances are estimates based on attendance uploaded so far and remaining scheduled sessions. Final balances may update after the month ends.</small>" +
-                        (data.unredeemedDates
-                          ? "<br><small>Unredeemed dates: " + data.unredeemedDates + "</small>"
-                          : "") +
-                        lastUpdatedText;
+                    showDashboard(data);
                 } else {
                     div.className = "error";
                     div.innerHTML =
@@ -201,6 +253,61 @@
                         "<small>Only students who have attended or have been scheduled in the last 2 months are shown in our system.</small>" +
                         lastUpdatedText;
                 }
+            }
+            function showDashboard(data) {
+                const loginCard = document.querySelector(".card");
+                const dashboard = document.getElementById("dashboard");
+            
+                loginCard.style.display = "none";
+                dashboard.style.display = "block";
+            
+                document.getElementById("dashboardStudentName").textContent =
+                    data.name + "'s Dashboard";
+            
+                document.getElementById("dashboardMakeups").textContent =
+                    data.makeups;
+            
+                document.getElementById("dashboardUnredeemedDates").innerHTML =
+                    data.unredeemedDates
+                        ? "Unredeemed dates: " + data.unredeemedDates
+                        : "No unredeemed makeup dates listed.";
+            
+                document.getElementById("dashboardLastUpdated").innerHTML =
+                    data.lastUpdated
+                        ? "<br>Last updated: " + data.lastUpdated
+                        : "";
+            
+                document.getElementById("dashboardMessage").innerHTML =
+                    "<small>Current-month makeup balances are estimates based on attendance uploaded so far and remaining scheduled sessions. Final balances may update after the month ends.</small>";
+            }
+            
+            function logout() {
+                document.querySelector(".card").style.display = "block";
+                document.getElementById("dashboard").style.display = "none";
+            
+                document.getElementById("result").style.display = "none";
+                document.getElementById("result").innerHTML = "";
+            
+                document.getElementById("name").value = "";
+                document.getElementById("parentName").value = "";
+            }
+            
+            function showMakeupScheduling() {
+                document.getElementById("dashboardMessage").innerHTML =
+                    "<strong>Schedule a Makeup Session</strong><br>" +
+                    "<small>This feature will be added soon.</small>";
+            }
+            
+            function showScheduleChangeRequest() {
+                document.getElementById("dashboardMessage").innerHTML =
+                    "<strong>Request a Schedule Change</strong><br>" +
+                    "<small>This feature will be added soon.</small>";
+            }
+            
+            function showCurrentSchedule() {
+                document.getElementById("dashboardMessage").innerHTML =
+                    "<strong>Current Schedule</strong><br>" +
+                    "<small>This feature will be added soon.</small>";
             }
     </script>
 </body>
