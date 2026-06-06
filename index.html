@@ -308,7 +308,8 @@
                         : "";
             
                 document.getElementById("dashboardMessage").innerHTML =
-                    "<small>Current-month makeup balances are estimates based on attendance uploaded so far and remaining scheduled sessions. Final balances may update after the month ends.</small>" +
+                    "<small>Current-month makeup balances are estimates based on attendance uploaded so far and remaining scheduled sessions. Final balances may update after the month ends.</small><br>" +
+                    "<small>Scheduled makeup sessions are not deducted from the balance until the student attends.</small>" +
                     renderMakeupHistoryTable(data.makeupHistory);
             }
             
